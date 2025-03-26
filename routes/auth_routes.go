@@ -10,12 +10,10 @@ import (
 func AuthRoutes(router *gin.Engine) {
 	api := router.Group("/mohamed-rizwane")
 	{
-		router.GET("/", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"message": "Bienvenue sur l'API d'authentification!",
-			})
-		})
 		router.GET("/health", func(c *gin.Context) {
+			c.Status(200)
+		})
+		router.GET("/", func(c *gin.Context) {
 			c.JSON(200, gin.H{
 				"message": "Bienvenue sur l'API d'authentification!",
 			})
