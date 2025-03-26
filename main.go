@@ -19,11 +19,11 @@ func main() {
 	r.GET("/favicon.ico", func(c *gin.Context) {
 		c.AbortWithStatus(204) // Ignore proprement les requêtes favicon.ico
 	})
-	r.GET("/health", func(c *gin.Context) {
+	r.GET("7b52f6ff-21c6-435e-8f62-9bfb5ed1b999/health", func(c *gin.Context) {
 		c.Status(200)
 	})
 	// Routes existantes
-	api := r.Group("/567088a9-6689-4e67-b5e5-ed40ad0a830c")
+	api := r.Group("/7b52f6ff-21c6-435e-8f62-9bfb5ed1b999")
 	{
 		api.POST("/register", handlers.Register)
 		api.POST("/login", handlers.Login)
