@@ -7,9 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Profile retourne les informations de l'utilisateur authentifié
 func Profile(c *gin.Context) {
-	user, exists := c.Get("user") // Récupérer l'utilisateur depuis le middleware
+	user, exists := c.Get("user")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return

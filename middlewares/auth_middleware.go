@@ -10,11 +10,11 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-// Clé secrète (doit être la même pour signer et vérifier le token)
 var secretKey = []byte("secret")
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing Authorization header"})
@@ -31,26 +31,19 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		tokenString := parts[1]
 
-		// Débogage : Afficher le token reçu
-		fmt.Println("Token reçu :", tokenString)
-
-		// Vérifier et parser le token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-			}
 			return secretKey, nil
 		})
 
-		if err != nil {
-			fmt.Println("Erreur JWT :", err) // Débogage
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token", "details": err.Error()})
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token "})
+			fmt.Println(err)
 			c.Abort()
 			return
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			// Vérification expiration
+
 			if exp, ok := claims["exp"].(float64); ok {
 				if time.Now().Unix() > int64(exp) {
 					c.JSON(http.StatusUnauthorized, gin.H{"error": "Token expired"})
@@ -59,7 +52,6 @@ func AuthMiddleware() gin.HandlerFunc {
 				}
 			}
 
-			// Ajouter l'utilisateur dans le contexte
 			c.Set("user", claims["sub"])
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})

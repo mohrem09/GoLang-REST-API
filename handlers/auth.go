@@ -10,9 +10,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var users = []models.User{} // Simule une base de données
+var users = []models.User{}
 
-var jwtKey = []byte("SECRET_KEY") // Remplace par une clé secrète sécurisée
+var jwtKey = []byte("secret")
 
 func Register(c *gin.Context) {
 	var user models.User
@@ -38,8 +38,8 @@ func Login(c *gin.Context) {
 
 	for _, user := range users {
 		if user.Email == credentials.Email && bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)) == nil {
-			// ✅ Générer un token JWT
-			expirationTime := time.Now().Add(24 * time.Hour) // Token valide 24h
+
+			expirationTime := time.Now().Add(24 * time.Hour)
 			claims := &jwt.RegisteredClaims{
 				Subject:   user.Email,
 				ExpiresAt: jwt.NewNumericDate(expirationTime),
@@ -52,7 +52,6 @@ func Login(c *gin.Context) {
 				return
 			}
 
-			// ✅ Retourner le token au client
 			c.JSON(http.StatusOK, gin.H{
 				"message": "Login successful",
 				"token":   tokenString,
