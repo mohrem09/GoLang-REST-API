@@ -1,15 +1,33 @@
 package main
 
 import (
-	"auth-api/routes"
+	"auth-api/handlers"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	router := gin.Default()
+	r := gin.Default()
 
-	routes.AuthRoutes(router)
+	// Ajoute ce code pour gérer la racine ("/") et le favicon.ico
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "Bienvenue dans votre API GoLang!",
+		})
+	})
 
-	router.Run(":8080")
+	r.GET("/favicon.ico", func(c *gin.Context) {
+		c.AbortWithStatus(204) // Ignore proprement les requêtes favicon.ico
+	})
+
+	// Routes existantes
+	api := r.Group("/567088a9-6689-4e67-b5e5-ed40ad0a830c")
+	{
+		api.POST("/register", handlers.Register)
+		api.POST("/login", handlers.Login)
+		api.GET("/me", handlers.Profile)
+	}
+
+	// Lance le serveur sur le port 8080
+	r.Run(":8080")
 }
